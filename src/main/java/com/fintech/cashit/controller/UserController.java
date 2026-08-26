@@ -1,5 +1,6 @@
 package com.fintech.cashit.controller;
 
+import com.fintech.cashit.DTO.UserResponseDTO;
 import com.fintech.cashit.entity.User;
 import com.fintech.cashit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +20,19 @@ public class UserController {
         return "its working";
     }
     @PostMapping("/users")
-    public User createUser(@RequestBody User user)
+    public UserResponseDTO createUser(@RequestBody User user)
     {
-        return userService.saveUser(user);
+       User savedUser=userService.saveUser(user);
+       return userService.convertToDTO(savedUser);
     }
     @GetMapping("/findallusers")
     public List<User> getAllUsers(){
         return userService.getAllUsers();
     }
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public UserResponseDTO getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        return userService.convertToDTO(user);
     }
     @PutMapping("/users/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {

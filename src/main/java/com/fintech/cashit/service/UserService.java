@@ -1,7 +1,9 @@
 package com.fintech.cashit.service;
 
+import com.fintech.cashit.DTO.UserResponseDTO;
 import com.fintech.cashit.repository.UserRepository;
 import com.fintech.cashit.entity.User;import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fintech.cashit.repository.UserRepository;
 
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Service
 public class UserService {
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private  UserRepository userRepository;
 
@@ -33,6 +37,15 @@ public class UserService {
     }
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+    public UserResponseDTO convertToDTO(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+
+        return dto;
     }
 
 }
