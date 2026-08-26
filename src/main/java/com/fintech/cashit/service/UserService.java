@@ -1,5 +1,6 @@
 package com.fintech.cashit.service;
 
+import com.fintech.cashit.DTO.LoginRequest;
 import com.fintech.cashit.DTO.UserResponseDTO;
 import com.fintech.cashit.repository.UserRepository;
 import com.fintech.cashit.entity.User;import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,10 @@ public class UserService {
         dto.setEmail(user.getEmail());
 
         return dto;
+    }
+    public boolean login(LoginRequest request){
+        User user=userRepository.findByEmail(request.getEmail());
+        return user!=null && passwordEncoder.matches(request.getPassword(), user.getPassword());
     }
 
 }

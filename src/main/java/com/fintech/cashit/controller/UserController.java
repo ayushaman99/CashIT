@@ -1,5 +1,6 @@
 package com.fintech.cashit.controller;
 
+import com.fintech.cashit.DTO.LoginRequest;
 import com.fintech.cashit.DTO.UserResponseDTO;
 import com.fintech.cashit.entity.User;
 import com.fintech.cashit.service.UserService;
@@ -42,5 +43,9 @@ public class UserController {
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return "User deleted";
+    }
+    @PostMapping("/login")
+    public boolean login(@RequestBody LoginRequest request) {
+        return userService.login(request);
     }
 }
