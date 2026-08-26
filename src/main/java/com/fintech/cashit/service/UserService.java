@@ -13,6 +13,8 @@ import java.util.List;
 @Service
 public class UserService {
     @Autowired
+    private JwtService jwtService;
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private  UserRepository userRepository;
@@ -50,9 +52,14 @@ public class UserService {
 
         return dto;
     }
-    public boolean login(LoginRequest request){
+    public String login(LoginRequest request){
         User user=userRepository.findByEmail(request.getEmail());
-        return user!=null && passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (user!=null && passwordEncoder.matches(request.getPassword(), user.getPassword()))
+        {
+            return jwtService.generateToken(user.getEmail());
+        }
+        return "Invalid Credentials";
+
     }
 
 }
