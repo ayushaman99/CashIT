@@ -45,7 +45,7 @@ public class UserController {
         return "User deleted";
     }
     @PostMapping("/login")
-    public boolean login(@RequestBody LoginRequest request) {
+    public String login(@RequestBody LoginRequest request) {
         return userService.login(request);
     }
 }
