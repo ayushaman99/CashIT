@@ -5,6 +5,8 @@ import com.fintech.cashit.entity.User;import org.springframework.beans.factory.a
 import org.springframework.stereotype.Service;
 import com.fintech.cashit.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 public class UserService {
     @Autowired
@@ -13,6 +15,12 @@ public class UserService {
     public User saveUser(User user)
     {
         return userRepository.save(user);
+    }
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
 }

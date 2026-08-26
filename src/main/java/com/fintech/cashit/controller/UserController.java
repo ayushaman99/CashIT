@@ -4,10 +4,9 @@ import com.fintech.cashit.entity.User;
 import com.fintech.cashit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -23,5 +22,13 @@ public class UserController {
     public User createUser(@RequestBody User user)
     {
         return userService.saveUser(user);
+    }
+    @GetMapping("/findallusers")
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
+    }
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 }
