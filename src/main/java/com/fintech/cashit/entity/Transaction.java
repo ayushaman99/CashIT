@@ -12,6 +12,17 @@ public class Transaction {
 
     private BigDecimal amount;
 
+    public Transaction() {
+    }
+
+    public Transaction(Long id, BigDecimal amount, String status, String type, User useer) {
+        this.id = id;
+        this.amount = amount;
+        this.status = status;
+        this.type = type;
+        this.useer = useer;
+    }
+
     public Long getId() {
         return id;
     }
