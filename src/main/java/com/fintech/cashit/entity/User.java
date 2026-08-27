@@ -2,6 +2,8 @@ package com.fintech.cashit.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 public class User {
@@ -57,4 +59,15 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    @OneToMany(mappedBy="user")
+    private List<Transaction> transactions;
 }
