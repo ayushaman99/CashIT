@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import com.fintech.cashit.entity.TransactionStatus;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,17 @@ public class TransactionService {
          transaction.setCreatedAt(LocalDateTime.now());
          transaction.setTransactionReference(UUID.randomUUID().toString());
         return transactionRepository.save(transaction);
+    }
+    public List<Transaction> getUserTransaction(Authentication authentication){
+        User user=(User)authentication.getPrincipal();
+        return transactionRepository.findByUser(user);
+    }
+    public Transaction getTransactionById(Long id, Authentication authentication){
+        User user=(User) authentication.getPrincipal();
+        return transactionRepository
+                .findByUserAndId(id,user)
+                .orElse(null);
+
     }
     }
 
