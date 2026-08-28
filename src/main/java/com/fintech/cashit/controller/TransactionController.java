@@ -1,5 +1,6 @@
 package com.fintech.cashit.controller;
 
+import com.fintech.cashit.DTO.TransactionRequestDTO;
 import com.fintech.cashit.entity.Transaction;
 import com.fintech.cashit.service.TransactionService;
 import jakarta.validation.Valid;
@@ -20,10 +21,10 @@ public class TransactionController {
 
     @PostMapping("/transactions")
     public Transaction createTransaction(
-           @Valid @RequestBody Transaction transaction,
+            @Valid @RequestBody TransactionRequestDTO request,
             Authentication authentication) {
 
-        return transactionService.createTransaction(transaction, authentication);
+        return transactionService.createTransaction(request, authentication);
     }
     @GetMapping("/transactions")
     public List<Transaction> getUserTransactions(Authentication authentication){

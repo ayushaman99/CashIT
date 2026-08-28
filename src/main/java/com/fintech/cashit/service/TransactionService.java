@@ -1,5 +1,7 @@
 package com.fintech.cashit.service;
 
+import com.fintech.cashit.DTO.TransactionRequestDTO;
+import com.fintech.cashit.DTO.TransactionResponseDTO;
 import com.fintech.cashit.entity.Transaction;
 import com.fintech.cashit.entity.TransactionStatus;
 import com.fintech.cashit.entity.User;
@@ -20,9 +22,11 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public Transaction createTransaction(Transaction transaction, Authentication authentication) {
+    public Transaction createTransaction(TransactionRequestDTO request, Authentication authentication) {
 
         User user = (User) authentication.getPrincipal();
+
+        Transaction transaction=new Transaction();
 
         transaction.setUser(user);
          transaction.setStatus(TransactionStatus.PENDING);
@@ -40,6 +44,20 @@ public class TransactionService {
                 .findByUserAndId(id,user)
                 .orElse(null);
 
+    }
+    public TransactionResponseDTO convertToDTO(Transaction transaction) {
+
+        TransactionResponseDTO dto = new TransactionResponseDTO();
+
+        dto.setId(transaction.getId());
+        dto.setAmount(transaction.getAmount());
+        dto.setStatus(transaction.getStatus());
+        dto.setType(transaction.getType());
+        dto.setDescription(transaction.getDescription());
+        dto.setTransactionReference(transaction.getTransactionReference());
+        dto.setCreatedAt(transaction.getCreatedAt());
+
+        return dto;
     }
     }
 
