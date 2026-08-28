@@ -1,6 +1,7 @@
 package com.fintech.cashit.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
@@ -9,18 +10,19 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Positive
     private BigDecimal amount;
 
     public Transaction() {
     }
 
-    public Transaction(Long id, BigDecimal amount, String status, String type, User useer) {
+    public Transaction(Long id, BigDecimal amount,TransactionStatus status,TransactionType type, User user) {
         this.id = id;
         this.amount = amount;
-        this.status = status;
-        this.type = type;
-        this.useer = useer;
+        this.status=status;
+
+        this.type=type;
+        this.user = user;
     }
 
     public Long getId() {
@@ -39,34 +41,50 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public String getStatus() {
+
+    public TransactionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TransactionStatus status) {
         this.status = status;
     }
 
     public User getUseer() {
-        return useer;
+        return user;
     }
 
     public void setUseer(User useer) {
-        this.useer = useer;
+        this.user = useer;
     }
 
-    public String getType() {
+
+
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
+
+
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
 
-    private String status;
-    private String type;
     @ManyToOne
-    private User useer;
+    private User user;
 
 
 }
