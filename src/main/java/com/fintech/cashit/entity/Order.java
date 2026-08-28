@@ -11,6 +11,15 @@ public class Order {
             @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BigDecimal amount;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
