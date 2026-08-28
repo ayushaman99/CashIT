@@ -8,6 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import com.fintech.cashit.entity.TransactionStatus;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import java.time.LocalDateTime;
+
 @Service
 public class TransactionService {
 
@@ -20,6 +25,8 @@ public class TransactionService {
 
         transaction.setUser(user);
          transaction.setStatus(TransactionStatus.PENDING);
+         transaction.setCreatedAt(LocalDateTime.now());
+         transaction.setTransactionReference(UUID.randomUUID().toString());
         return transactionRepository.save(transaction);
     }
     }

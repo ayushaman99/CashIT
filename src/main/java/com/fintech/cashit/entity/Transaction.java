@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 public class Transaction {
@@ -16,11 +17,11 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Long id, BigDecimal amount,TransactionStatus status,TransactionType type, User user) {
+    public Transaction(Long id,String description, BigDecimal amount,TransactionStatus status,TransactionType type, User user) {
         this.id = id;
         this.amount = amount;
         this.status=status;
-
+        this.description=description;
         this.type=type;
         this.user = user;
     }
@@ -86,5 +87,32 @@ public class Transaction {
     @ManyToOne
     private User user;
 
+    private LocalDateTime createdAt;
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    private String transactionReference;
+
+    public String getTransactionReference() {
+        return transactionReference;
+    }
+
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
+
+    }
 }
