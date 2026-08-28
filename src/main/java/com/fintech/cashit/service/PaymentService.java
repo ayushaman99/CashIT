@@ -52,5 +52,19 @@ public class PaymentService {
 
         return paymentRepository.save(payment);
     }
+    public Payment confirmPayment(
+            Long paymentId,
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        Payment payment = paymentRepository
+                .findByIdAndUser_User(paymentId, user)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
+
+        payment.setStatus(PaymentStatus.SUCCESS);
+
+        return paymentRepository.save(payment);
+    }
 
 }
