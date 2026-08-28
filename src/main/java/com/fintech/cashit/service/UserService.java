@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class UserService {
-    @Autowired
     private Role role;
     @Autowired
     private JwtService jwtService;
