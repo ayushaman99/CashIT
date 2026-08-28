@@ -1,6 +1,6 @@
 package com.fintech.cashit.entity;
 
-public enum Roles {
+public enum Role {
     MERCHANT,
     ADMIN,
     CUSTOMER

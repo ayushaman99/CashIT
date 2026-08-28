@@ -64,10 +64,22 @@ public class User {
         return transactions;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+
     }
 
     @OneToMany(mappedBy="user")
     private List<Transaction> transactions;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

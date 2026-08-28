@@ -2,6 +2,7 @@ package com.fintech.cashit.service;
 
 import com.fintech.cashit.DTO.LoginRequest;
 import com.fintech.cashit.DTO.UserResponseDTO;
+import com.fintech.cashit.entity.Role;
 import com.fintech.cashit.repository.UserRepository;
 import com.fintech.cashit.entity.User;import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Service
 public class UserService {
+    @Autowired
+    private Role role;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -37,6 +40,7 @@ public class UserService {
         user.setName(updatedUser.getName());
         user.setEmail(updatedUser.getEmail());
         user.setPassword(updatedUser.getPassword());
+        user.setRole(Role.CUSTOMER);
         }
         return userRepository.save(user);
     }
