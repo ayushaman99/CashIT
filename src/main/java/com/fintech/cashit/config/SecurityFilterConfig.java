@@ -18,6 +18,8 @@ public class SecurityFilterConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/login","/users").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/transactions").authenticated()
                         .anyRequest().authenticated()
                 );
              return http.build();

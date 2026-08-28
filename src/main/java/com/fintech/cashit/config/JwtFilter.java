@@ -60,3 +60,4 @@ List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole().name()))              
         filterChain.doFilter(request, response);
     }
 }
+
