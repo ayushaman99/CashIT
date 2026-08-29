@@ -4,6 +4,7 @@ import com.fintech.cashit.DTO.OrderRequestDTO;
 import com.fintech.cashit.entity.Order;
 import com.fintech.cashit.entity.OrderStatus;
 import com.fintech.cashit.entity.User;
+import com.fintech.cashit.exception.OrderNotFoundException;
 import com.fintech.cashit.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -44,7 +45,7 @@ public class OrderService {
 
         return orderRepository
                 .findByIdAndUser(id, user)
-                .orElse(null);
+                .orElseThrow(()->new OrderNotFoundException("Order Not Found"));
     }
     public List<Order> getUserOrders(Authentication authentication) {
 

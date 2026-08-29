@@ -2,8 +2,7 @@ package com.fintech.cashit.service;
 
 import com.fintech.cashit.DTO.PaymentResponseDTO;
 import com.fintech.cashit.entity.*;
-import com.fintech.cashit.repository.OrderRepository;
-import com.fintech.cashit.repository.PaymentRepository;
+import com.fintech.cashit.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +14,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import com.fintech.cashit.DTO.PaymentRequestDTO;
 
 @Service
 public class PaymentService {
+    @Autowired
+    private TransactionRepository transactionRepository;
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -85,7 +87,24 @@ public class PaymentService {
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
 
+        Transaction transaction = new Transaction();
+
+        transaction.setAmount(payment.getAmount());
+        transaction.setType(TransactionType.PAYMENT);
+        transaction.setStatus(TransactionStatus.SUCCESS);
+        transaction.setUser(user);
+        transaction.setCreatedAt(LocalDateTime.now());
+        transaction.setTransactionReference(UUID.randomUUID().toString());
+
+        transactionRepository.save(transaction);
+
         return paymentRepository.save(payment);
+    }
+    public List<Payment> getUserPayments(Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        return paymentRepository.findByOrder_User(user);
     }
 
 }
