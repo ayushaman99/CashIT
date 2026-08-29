@@ -1,14 +1,11 @@
 package com.fintech.cashit.service;
 
+import com.fintech.cashit.entity.*;
 import com.fintech.cashit.repository.OrderRepository;
 import com.fintech.cashit.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fintech.cashit.entity.Payment;
-import com.fintech.cashit.entity.PaymentStatus;
-import com.fintech.cashit.entity.Order;
-import com.fintech.cashit.entity.User;
 import com.fintech.cashit.repository.OrderRepository;
 import com.fintech.cashit.repository.PaymentRepository;
 
@@ -63,6 +60,9 @@ public class PaymentService {
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
         payment.setStatus(PaymentStatus.SUCCESS);
+        Order order=payment.getOrder();
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
 
         return paymentRepository.save(payment);
     }
