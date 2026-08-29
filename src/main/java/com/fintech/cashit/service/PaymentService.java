@@ -2,6 +2,8 @@ package com.fintech.cashit.service;
 
 import com.fintech.cashit.DTO.PaymentResponseDTO;
 import com.fintech.cashit.entity.*;
+import com.fintech.cashit.exception.PaymentNotFoundException;
+import com.fintech.cashit.exception.PaymentStatusException;
 import com.fintech.cashit.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,10 +78,10 @@ public class PaymentService {
 
         Payment payment = paymentRepository
                 .findByIdAndUser_User(paymentId, user)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found"));
 
         if (payment.getStatus() != PaymentStatus.PENDING) {
-            throw new RuntimeException("Payment cannot be confirmed");
+            throw new PaymentStatusException("Payment cannot be confirmed");
         }
 
         payment.setStatus(PaymentStatus.SUCCESS);
