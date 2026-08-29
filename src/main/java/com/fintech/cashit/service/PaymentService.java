@@ -1,5 +1,6 @@
 package com.fintech.cashit.service;
 
+import com.fintech.cashit.DTO.PaymentResponseDTO;
 import com.fintech.cashit.entity.*;
 import com.fintech.cashit.repository.OrderRepository;
 import com.fintech.cashit.repository.PaymentRepository;
@@ -34,6 +35,9 @@ public class PaymentService {
         Order order = orderRepository
                 .findByIdAndUser(request.getOrderId(), user)
                 .orElseThrow(()-> new RuntimeException("Order nOT Found"));
+        if (order.getStatus() == OrderStatus.PAID) {
+            throw new RuntimeException("Order is already paid");
+        }
 
         Payment payment = new Payment();
 
@@ -49,6 +53,19 @@ public class PaymentService {
 
         return paymentRepository.save(payment);
     }
+    public PaymentResponseDTO convertToDTO(Payment payment) {
+
+        PaymentResponseDTO dto = new PaymentResponseDTO();
+
+        dto.setId(payment.getId());
+        dto.setAmount(payment.getAmount());
+        dto.setStatus(payment.getStatus());
+        dto.setOrderId(payment.getOrder().getId());
+        dto.setPaymentReference(payment.getPaymentReference());
+        dto.setCreatedAt(payment.getCreatedAt());
+
+        return dto;
+    }
     public Payment confirmPayment(
             Long paymentId,
             Authentication authentication) {
@@ -58,6 +75,10 @@ public class PaymentService {
         Payment payment = paymentRepository
                 .findByIdAndUser_User(paymentId, user)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
+
+        if (payment.getStatus() != PaymentStatus.PENDING) {
+            throw new RuntimeException("Payment cannot be confirmed");
+        }
 
         payment.setStatus(PaymentStatus.SUCCESS);
         Order order=payment.getOrder();
