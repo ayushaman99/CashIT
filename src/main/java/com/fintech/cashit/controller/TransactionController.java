@@ -2,7 +2,6 @@ package com.fintech.cashit.controller;
 
 import com.fintech.cashit.DTO.TransactionRequestDTO;
 import com.fintech.cashit.DTO.TransactionResponseDTO;
-import com.fintech.cashit.entity.Transaction;
 import com.fintech.cashit.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,15 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/transactions")
-    public Transaction createTransaction(
+    public TransactionResponseDTO createTransaction(
             @Valid @RequestBody TransactionRequestDTO request,
             Authentication authentication) {
 
-        return transactionService.createTransaction(request, authentication);
+        return transactionService.convertToDTO(
+                transactionService.createTransaction(request, authentication)
+        );
     }
+
     @GetMapping("/transactions")
     public List<TransactionResponseDTO> getUserTransactions(
             Authentication authentication) {
@@ -33,8 +35,8 @@ public class TransactionController {
                 .stream()
                 .map(transactionService::convertToDTO)
                 .toList();
-
     }
+
     @GetMapping("/transactions/{id}")
     public TransactionResponseDTO getTransactionById(
             @PathVariable Long id,
@@ -44,5 +46,4 @@ public class TransactionController {
                 transactionService.getTransactionById(id, authentication)
         );
     }
-
 }

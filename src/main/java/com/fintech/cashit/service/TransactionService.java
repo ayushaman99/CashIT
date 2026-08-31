@@ -5,16 +5,15 @@ import com.fintech.cashit.DTO.TransactionResponseDTO;
 import com.fintech.cashit.entity.Transaction;
 import com.fintech.cashit.entity.TransactionStatus;
 import com.fintech.cashit.entity.User;
+import com.fintech.cashit.exception.TransactionNotFoundException;
 import com.fintech.cashit.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import com.fintech.cashit.entity.TransactionStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import java.time.LocalDateTime;
 
 @Service
 public class TransactionService {
@@ -22,34 +21,42 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public Transaction createTransaction(TransactionRequestDTO request, Authentication authentication) {
+    public Transaction createTransaction(
+            TransactionRequestDTO request,
+            Authentication authentication) {
 
         User user = (User) authentication.getPrincipal();
 
-        Transaction transaction=new Transaction();
-
+        Transaction transaction = new Transaction();
         transaction.setUser(user);
-         transaction.setStatus(TransactionStatus.PENDING);
-         transaction.setCreatedAt(LocalDateTime.now());
-         transaction.setTransactionReference(UUID.randomUUID().toString());
         transaction.setAmount(request.getAmount());
         transaction.setType(request.getType());
         transaction.setDescription(request.getDescription());
+        transaction.setStatus(TransactionStatus.PENDING);
+        transaction.setCreatedAt(LocalDateTime.now());
+        transaction.setTransactionReference(UUID.randomUUID().toString());
+
         return transactionRepository.save(transaction);
     }
-    public List<Transaction> getUserTransaction(Authentication authentication){
-        User user=(User)authentication.getPrincipal();
+
+    public List<Transaction> getUserTransaction(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
         return transactionRepository.findByUser(user);
     }
-    public Transaction getTransactionById(Long id, Authentication authentication){
-        User user=(User) authentication.getPrincipal();
+
+    public Transaction getTransactionById(
+            Long id,
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
         return transactionRepository
-                .findByIdAndUser(id,user)
-                .orElse(null);
-
+                .findByIdAndUser(id, user)
+                .orElseThrow(() ->
+                        new TransactionNotFoundException("Transaction not found"));
     }
-    public TransactionResponseDTO convertToDTO(Transaction transaction) {
 
+    public TransactionResponseDTO convertToDTO(Transaction transaction) {
         TransactionResponseDTO dto = new TransactionResponseDTO();
 
         dto.setId(transaction.getId());
@@ -62,5 +69,4 @@ public class TransactionService {
 
         return dto;
     }
-    }
-
+}
