@@ -4,6 +4,7 @@ import com.fintech.cashit.DTO.PaymentRequestDTO;
 import com.fintech.cashit.DTO.PaymentResponseDTO;
 import com.fintech.cashit.entity.Payment;
 import com.fintech.cashit.service.PaymentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class PaymentController {
 
     @PostMapping("/payments")
     public PaymentResponseDTO createPayment(
-            @RequestBody PaymentRequestDTO request,
+            @RequestBody @Valid PaymentRequestDTO request,
             Authentication authentication) {
 
         return paymentService.convertToDTO(

@@ -3,6 +3,7 @@ package com.fintech.cashit.controller;
 import com.fintech.cashit.DTO.OrderRequestDTO;
 import com.fintech.cashit.entity.Order;
 import com.fintech.cashit.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class OrderController {
 
     @PostMapping("/orders")
     public Order createOrder(
-            @RequestBody OrderRequestDTO request,
+            @RequestBody @Valid OrderRequestDTO request,
             Authentication authentication) {
 
         return orderService.createOrder(request, authentication);
