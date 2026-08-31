@@ -1,7 +1,9 @@
 package com.fintech.cashit.DTO;
 
 import com.fintech.cashit.entity.TransactionType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
@@ -32,7 +34,18 @@ public class TransactionRequestDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+    @NotBlank
+    @Pattern(regexp = "^[A-Za-z]{3}$",
+            message = "Currency must be a 3-letter ISO code, for example INR")
+    private String currency;
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
     public TransactionType getType() {
         return type;
     }

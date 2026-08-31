@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import com.fintech.cashit.DTO.OrderResponseDTO;
+import java.util.Currency;
+import java.util.Locale;
 
 @Service
 public class OrderService {
@@ -28,6 +31,7 @@ public class OrderService {
         Order order = new Order();
 
         order.setAmount(request.getAmount());
+        order.setCurrency(normalizeCurrency(request.getCurrency()));
         order.setDescription(request.getDescription());
 
         order.setUser(user);
@@ -52,5 +56,27 @@ public class OrderService {
         User user = (User) authentication.getPrincipal();
 
         return orderRepository.findByUser(user);
+    }
+    public OrderResponseDTO convertToDTO(Order order) {
+        OrderResponseDTO dto = new OrderResponseDTO();
+
+        dto.setId(order.getId());
+        dto.setAmount(order.getAmount());
+        dto.setCurrency(order.getCurrency());
+        dto.setDescription(order.getDescription());
+        dto.setStatus(order.getStatus());
+        dto.setOrderReference(order.getOrderReference());
+        dto.setCreatedAt(order.getCreatedAt());
+
+        return dto;
+    }
+
+    private String normalizeCurrency(String currency) {
+        try {
+            return Currency.getInstance(currency.toUpperCase(Locale.ROOT))
+                    .getCurrencyCode();
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Unsupported currency");
+        }
     }
 }

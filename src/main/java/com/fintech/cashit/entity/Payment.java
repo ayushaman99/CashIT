@@ -12,62 +12,48 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(nullable = false, precision = 19, scale = 4)
+    private BigDecimal amount;
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    @Column(nullable = false, length = 3)
+    private String currency;
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
-    public String getPaymentReference() {
-        return paymentReference;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus status;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private String paymentReference;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
+
+    public Order getOrder() { return order; }
+    public void setOrder(Order order) { this.order = order; }
+
+    public PaymentStatus getStatus() { return status; }
+    public void setStatus(PaymentStatus status) { this.status = status; }
+
+    public String getPaymentReference() { return paymentReference; }
     public void setPaymentReference(String paymentReference) {
         this.paymentReference = paymentReference;
     }
 
-    private String paymentReference;
-
-    public void setId(Long id) {
-        this.id = id;
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    private BigDecimal amount;
-
-    public PaymentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    @ManyToOne
-    private Order order;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
 }

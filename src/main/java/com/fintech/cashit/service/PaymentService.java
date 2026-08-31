@@ -61,6 +61,7 @@ public class PaymentService {
 
         Payment payment = new Payment();
         payment.setAmount(request.getAmount());
+        payment.setCurrency(order.getCurrency());
         payment.setOrder(order);
         payment.setStatus(PaymentStatus.PENDING);
         payment.setPaymentReference(UUID.randomUUID().toString());
@@ -73,6 +74,7 @@ public class PaymentService {
     public Payment confirmPayment(
             Long paymentId,
             Authentication authentication) {
+
 
         User user = (User) authentication.getPrincipal();
 
@@ -98,6 +100,9 @@ public class PaymentService {
         transaction.setCreatedAt(LocalDateTime.now());
         transaction.setTransactionReference(UUID.randomUUID().toString());
         transaction.setDescription("Payment for order " + order.getOrderReference());
+        transaction.setCurrency(payment.getCurrency());
+        transaction.setPayment(payment);
+
 
         transactionRepository.save(transaction);
 
@@ -118,6 +123,7 @@ public class PaymentService {
         dto.setOrderId(payment.getOrder().getId());
         dto.setPaymentReference(payment.getPaymentReference());
         dto.setCreatedAt(payment.getCreatedAt());
+        dto.setCurrency(payment.getCurrency());
 
         return dto;
     }

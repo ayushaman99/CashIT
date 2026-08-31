@@ -5,6 +5,8 @@ import com.fintech.cashit.DTO.TransactionResponseDTO;
 import com.fintech.cashit.entity.Transaction;
 import com.fintech.cashit.entity.TransactionStatus;
 import com.fintech.cashit.entity.User;
+import java.util.Currency;
+import java.util.Locale;
 import com.fintech.cashit.exception.TransactionNotFoundException;
 import com.fintech.cashit.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         transaction.setUser(user);
         transaction.setAmount(request.getAmount());
+        transaction.setCurrency(normalizeCurrency(request.getCurrency()));
         transaction.setType(request.getType());
         transaction.setDescription(request.getDescription());
         transaction.setStatus(TransactionStatus.PENDING);
@@ -66,7 +69,20 @@ public class TransactionService {
         dto.setDescription(transaction.getDescription());
         dto.setTransactionReference(transaction.getTransactionReference());
         dto.setCreatedAt(transaction.getCreatedAt());
+        dto.setCurrency(transaction.getCurrency());
+
+        if (transaction.getPayment() != null) {
+            dto.setPaymentId(transaction.getPayment().getId());
+        }
 
         return dto;
+    }
+    private String normalizeCurrency(String currency) {
+        try {
+            return Currency.getInstance(currency.toUpperCase(Locale.ROOT))
+                    .getCurrencyCode();
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Unsupported currency");
+        }
     }
 }

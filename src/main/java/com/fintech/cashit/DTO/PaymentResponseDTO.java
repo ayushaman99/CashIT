@@ -15,6 +15,15 @@ public class PaymentResponseDTO {
     public Long getId() {
         return id;
     }
+    private String currency;
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public void setId(Long id) {
         this.id = id;

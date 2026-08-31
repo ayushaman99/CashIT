@@ -1,7 +1,7 @@
 package com.fintech.cashit.controller;
 
 import com.fintech.cashit.DTO.OrderRequestDTO;
-import com.fintech.cashit.entity.Order;
+import com.fintech.cashit.DTO.OrderResponseDTO;
 import com.fintech.cashit.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,26 +17,32 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/orders")
-    public Order createOrder(
+    public OrderResponseDTO createOrder(
             @RequestBody @Valid OrderRequestDTO request,
             Authentication authentication) {
 
-        return orderService.createOrder(request, authentication);
-
-
-
-
+        return orderService.convertToDTO(
+                orderService.createOrder(request, authentication)
+        );
     }
 
     @GetMapping("/orders")
-    public List<Order> getUserOrders(Authentication authentication) {
-        return orderService.getUserOrders(authentication);
+    public List<OrderResponseDTO> getUserOrders(
+            Authentication authentication) {
+
+        return orderService.getUserOrders(authentication)
+                .stream()
+                .map(orderService::convertToDTO)
+                .toList();
     }
+
     @GetMapping("/orders/{id}")
-    public Order getOrderById(
+    public OrderResponseDTO getOrderById(
             @PathVariable Long id,
             Authentication authentication) {
 
-        return orderService.getOrderById(id, authentication);
+        return orderService.convertToDTO(
+                orderService.getOrderById(id, authentication)
+        );
     }
 }

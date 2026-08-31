@@ -14,7 +14,24 @@ private BigDecimal amount;
     public Long getId() {
         return id;
     }
+    private String currency;
+    private Long paymentId;
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public Long getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
+    }
     public void setId(Long id) {
         this.id = id;
     }
