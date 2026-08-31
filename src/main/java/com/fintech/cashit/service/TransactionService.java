@@ -44,7 +44,7 @@ public class TransactionService {
     public Transaction getTransactionById(Long id, Authentication authentication){
         User user=(User) authentication.getPrincipal();
         return transactionRepository
-                .findByUserAndId(id,user)
+                .findByIdAndUser(id,user)
                 .orElse(null);
 
     }

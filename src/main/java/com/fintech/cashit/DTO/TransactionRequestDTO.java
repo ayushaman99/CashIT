@@ -1,12 +1,20 @@
 package com.fintech.cashit.DTO;
 
 import com.fintech.cashit.entity.TransactionType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
 public class TransactionRequestDTO {
+
+    @NotNull
+    @Positive
     private BigDecimal amount;
+
     private String description;
+
+    @NotNull
     private TransactionType type;
 
     public BigDecimal getAmount() {
