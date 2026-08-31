@@ -1,4 +1,7 @@
 package com.fintech.cashit.DTO;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public class OrderRequestDTO {
@@ -17,7 +20,8 @@ public class OrderRequestDTO {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
+    @Positive
+    @NotNull
     private BigDecimal amount;
     private String description;
 }
