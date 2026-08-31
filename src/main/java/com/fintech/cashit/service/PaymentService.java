@@ -5,6 +5,7 @@ import com.fintech.cashit.entity.*;
 import com.fintech.cashit.exception.PaymentNotFoundException;
 import com.fintech.cashit.exception.PaymentStatusException;
 import com.fintech.cashit.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +84,7 @@ public class PaymentService {
 
         return dto;
     }
+    @Transactional
     public Payment confirmPayment(
             Long paymentId,
             Authentication authentication) {
