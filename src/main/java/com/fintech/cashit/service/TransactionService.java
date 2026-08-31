@@ -32,6 +32,9 @@ public class TransactionService {
          transaction.setStatus(TransactionStatus.PENDING);
          transaction.setCreatedAt(LocalDateTime.now());
          transaction.setTransactionReference(UUID.randomUUID().toString());
+        transaction.setAmount(request.getAmount());
+        transaction.setType(request.getType());
+        transaction.setDescription(request.getDescription());
         return transactionRepository.save(transaction);
     }
     public List<Transaction> getUserTransaction(Authentication authentication){

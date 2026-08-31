@@ -1,17 +1,14 @@
 package com.fintech.cashit.service;
 
+import com.fintech.cashit.DTO.PaymentRequestDTO;
 import com.fintech.cashit.DTO.PaymentResponseDTO;
 import com.fintech.cashit.entity.*;
 import com.fintech.cashit.exception.PaymentNotFoundException;
 import com.fintech.cashit.exception.PaymentStatusException;
-import com.fintech.cashit.repository.*;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.fintech.cashit.repository.OrderRepository;
 import com.fintech.cashit.repository.PaymentRepository;
-
+import com.fintech.cashit.repository.TransactionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,12 +17,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import com.fintech.cashit.DTO.PaymentRequestDTO;
 
 @Service
 public class PaymentService {
+
     @Autowired
     private TransactionRepository transactionRepository;
+
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -40,27 +38,20 @@ public class PaymentService {
 
         Order order = orderRepository
                 .findByIdAndUser(request.getOrderId(), user)
-                .orElseThrow(()-> new RuntimeException("Order nOT Found"));
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
         if (order.getStatus() == OrderStatus.PAID) {
-            throw new RuntimeException("Order is already paid");
+            throw new PaymentStatusException("Order is already paid");
         }
-
-        Payment payment = new Payment();
-
-        payment.setAmount(request.getAmount());
-        payment.setOrder(order);
-        payment.setStatus(PaymentStatus.PENDING);
-        payment.setPaymentReference(UUID.randomUUID().toString());
-        payment.setCreatedAt(LocalDateTime.now());
 
         if (request.getAmount().compareTo(order.getAmount()) != 0) {
-            throw new RuntimeException("Payment amount does not match order amount");
+            throw new PaymentStatusException(
+                    "Payment amount does not match order amount"
+            );
         }
+
         Optional<Payment> existingPayment =
-                paymentRepository.findByOrderAndStatus(
-                        order,
-                        PaymentStatus.PENDING
-                );
+                paymentRepository.findByOrderAndStatus(order, PaymentStatus.PENDING);
 
         if (existingPayment.isPresent()) {
             throw new PaymentStatusException(
@@ -68,11 +59,57 @@ public class PaymentService {
             );
         }
 
+        Payment payment = new Payment();
+        payment.setAmount(request.getAmount());
+        payment.setOrder(order);
+        payment.setStatus(PaymentStatus.PENDING);
+        payment.setPaymentReference(UUID.randomUUID().toString());
+        payment.setCreatedAt(LocalDateTime.now());
 
         return paymentRepository.save(payment);
     }
-    public PaymentResponseDTO convertToDTO(Payment payment) {
 
+    @Transactional
+    public Payment confirmPayment(
+            Long paymentId,
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        Payment payment = paymentRepository
+                .findByIdAndOrder_User(paymentId, user)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found"));
+
+        if (payment.getStatus() != PaymentStatus.PENDING) {
+            throw new PaymentStatusException("Payment cannot be confirmed");
+        }
+
+        payment.setStatus(PaymentStatus.SUCCESS);
+
+        Order order = payment.getOrder();
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+
+        Transaction transaction = new Transaction();
+        transaction.setAmount(payment.getAmount());
+        transaction.setType(TransactionType.PAYMENT);
+        transaction.setStatus(TransactionStatus.SUCCESS);
+        transaction.setUser(user);
+        transaction.setCreatedAt(LocalDateTime.now());
+        transaction.setTransactionReference(UUID.randomUUID().toString());
+        transaction.setDescription("Payment for order " + order.getOrderReference());
+
+        transactionRepository.save(transaction);
+
+        return paymentRepository.save(payment);
+    }
+
+    public List<Payment> getUserPayments(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return paymentRepository.findByOrder_User(user);
+    }
+
+    public PaymentResponseDTO convertToDTO(Payment payment) {
         PaymentResponseDTO dto = new PaymentResponseDTO();
 
         dto.setId(payment.getId());
@@ -84,45 +121,4 @@ public class PaymentService {
 
         return dto;
     }
-    @Transactional
-    public Payment confirmPayment(
-            Long paymentId,
-            Authentication authentication) {
-
-        User user = (User) authentication.getPrincipal();
-
-        Payment payment = paymentRepository
-                .findByIdAndUser_User(paymentId, user)
-                .orElseThrow(() -> new PaymentNotFoundException("Payment not found"));
-
-        if (payment.getStatus() != PaymentStatus.PENDING) {
-            throw new PaymentStatusException("Payment cannot be confirmed");
-        }
-
-
-        payment.setStatus(PaymentStatus.SUCCESS);
-        Order order=payment.getOrder();
-        order.setStatus(OrderStatus.PAID);
-        orderRepository.save(order);
-
-        Transaction transaction = new Transaction();
-
-        transaction.setAmount(payment.getAmount());
-        transaction.setType(TransactionType.PAYMENT);
-        transaction.setStatus(TransactionStatus.SUCCESS);
-        transaction.setUser(user);
-        transaction.setCreatedAt(LocalDateTime.now());
-        transaction.setTransactionReference(UUID.randomUUID().toString());
-
-        transactionRepository.save(transaction);
-
-        return paymentRepository.save(payment);
-    }
-    public List<Payment> getUserPayments(Authentication authentication) {
-
-        User user = (User) authentication.getPrincipal();
-
-        return paymentRepository.findByOrder_User(user);
-    }
-
 }
