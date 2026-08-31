@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import com.fintech.cashit.DTO.PaymentRequestDTO;
 
@@ -54,6 +55,18 @@ public class PaymentService {
         if (request.getAmount().compareTo(order.getAmount()) != 0) {
             throw new RuntimeException("Payment amount does not match order amount");
         }
+        Optional<Payment> existingPayment =
+                paymentRepository.findByOrderAndStatus(
+                        order,
+                        PaymentStatus.PENDING
+                );
+
+        if (existingPayment.isPresent()) {
+            throw new PaymentStatusException(
+                    "Order already has a pending payment"
+            );
+        }
+
 
         return paymentRepository.save(payment);
     }
@@ -83,6 +96,7 @@ public class PaymentService {
         if (payment.getStatus() != PaymentStatus.PENDING) {
             throw new PaymentStatusException("Payment cannot be confirmed");
         }
+
 
         payment.setStatus(PaymentStatus.SUCCESS);
         Order order=payment.getOrder();
