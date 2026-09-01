@@ -1,5 +1,4 @@
 services:
-
   postgres:
     image: postgres:17
     container_name: cashit-postgres
@@ -8,9 +7,24 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mlpnkobji
     ports:
-      - "5433:5432"
+      - "55432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  cashit-app:
+    build: .
+    container_name: cashit-app
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cashIT
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: mlpnkobji
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
