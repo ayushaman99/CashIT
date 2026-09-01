@@ -16,7 +16,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/orders")
+    @PostMapping("/CreateOrders")
     public OrderResponseDTO createOrder(
             @RequestBody @Valid OrderRequestDTO request,
             Authentication authentication) {
