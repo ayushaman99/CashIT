@@ -8,6 +8,7 @@ import com.fintech.cashit.exception.PaymentStatusException;
 import com.fintech.cashit.repository.OrderRepository;
 import com.fintech.cashit.repository.PaymentRepository;
 import com.fintech.cashit.repository.TransactionRepository;
+import com.razorpay.RazorpayClient;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,8 @@ import java.util.UUID;
 
 @Service
 public class PaymentService {
-
+    @Autowired
+    private RazorpayClient razorpayClient;
     @Autowired
     private TransactionRepository transactionRepository;
 
