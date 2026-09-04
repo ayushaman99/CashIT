@@ -1,5 +1,5 @@
 package com.fintech.cashit.controller;
-
+import com.fintech.cashit.DTO.PaymentVerificationRequestDTO;
 import com.fintech.cashit.DTO.PaymentRequestDTO;
 import com.fintech.cashit.DTO.PaymentResponseDTO;
 import com.fintech.cashit.entity.Payment;
@@ -25,15 +25,16 @@ public class PaymentController {
                 paymentService.createPayment(request, authentication)
         );
     }
-    @PutMapping("/payments/{id}/confirm")
-    public PaymentResponseDTO confirmPayment(
-            @PathVariable Long id,
+    @PostMapping("/payments/verify")
+    public PaymentResponseDTO verifyPayment(
+            @RequestBody PaymentVerificationRequestDTO request,
             Authentication authentication) {
 
         return paymentService.convertToDTO(
-                paymentService.confirmPayment(id, authentication)
+                paymentService.verifyPayment(request, authentication)
         );
     }
+
     @GetMapping("/payments")
     public List<PaymentResponseDTO> getUserPayments(
             Authentication authentication) {
