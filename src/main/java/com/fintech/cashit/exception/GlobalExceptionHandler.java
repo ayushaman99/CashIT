@@ -57,8 +57,5 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
-    @ExceptionHandler(IdempotencyConflictException.class)
-    public ResponseEntity<String> handleIdempotencyConflict(IdempotencyConflictException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }
+
 }
