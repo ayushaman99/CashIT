@@ -155,6 +155,7 @@ public class PaymentService {
         dto.setPaymentReference(payment.getPaymentReference());
         dto.setCreatedAt(payment.getCreatedAt());
         dto.setCurrency(payment.getCurrency());
+        dto.setRazorpayOrderId(payment.getRazorpayOrderId());
 
         return dto;
     }
