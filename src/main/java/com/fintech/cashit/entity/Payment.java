@@ -52,6 +52,18 @@ public class Payment {
         this.paymentReference = paymentReference;
     }
 
+
+    @Column(unique = true)
+    private String razorpayOrderId;
+
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
+    }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;

@@ -69,5 +69,15 @@ public class PaymentResponseDTO {
         this.createdAt = createdAt;
     }
 
+    private String razorpayOrderId;
+
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
+    }
+
     private LocalDateTime createdAt;
 }

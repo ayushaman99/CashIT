@@ -10,6 +10,7 @@ import com.fintech.cashit.repository.PaymentRepository;
 import com.fintech.cashit.repository.TransactionRepository;
 import com.razorpay.RazorpayClient;
 import jakarta.transaction.Transactional;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,9 @@ public class PaymentService {
             );
         }
 
+
+
+
         Payment payment = new Payment();
         payment.setAmount(request.getAmount());
         payment.setCurrency(order.getCurrency());
@@ -69,7 +73,32 @@ public class PaymentService {
         payment.setPaymentReference(UUID.randomUUID().toString());
         payment.setCreatedAt(LocalDateTime.now());
 
+        try {
+            JSONObject razorpayOrderRequest = new JSONObject();
+
+
+            long amountInPaise = request.getAmount()
+                    .multiply(new java.math.BigDecimal("100"))
+                    .longValueExact();
+
+            razorpayOrderRequest.put("amount", amountInPaise);
+            razorpayOrderRequest.put("currency", order.getCurrency());
+            razorpayOrderRequest.put("receipt", payment.getPaymentReference());
+
+            com.razorpay.Order razorpayOrder =
+                    razorpayClient.orders.create(razorpayOrderRequest);
+
+            payment.setRazorpayOrderId(razorpayOrder.get("id").toString());
+
+        } catch (Exception e) {
+            throw new PaymentStatusException(
+                    "Failed to create Razorpay order"
+            );
+        }
+
         return paymentRepository.save(payment);
+
+
     }
 
     @Transactional
