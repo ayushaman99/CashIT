@@ -1,7 +1,9 @@
 package com.fintech.cashit.service;
-
+import com.fintech.cashit.DTO.PaymentVerificationRequestDTO;
+import org.springframework.beans.factory.annotation.Value;
 import com.fintech.cashit.DTO.PaymentRequestDTO;
 import com.fintech.cashit.DTO.PaymentResponseDTO;
+import com.razorpay.Utils;
 import com.fintech.cashit.entity.*;
 import com.fintech.cashit.exception.PaymentNotFoundException;
 import com.fintech.cashit.exception.PaymentStatusException;
@@ -24,6 +26,8 @@ import java.util.UUID;
 public class PaymentService {
     @Autowired
     private RazorpayClient razorpayClient;
+    @Value("${RAZORPAY_KEY_SECRET}")
+    private String razorpayKeySecret;
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -32,6 +36,8 @@ public class PaymentService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+
 
     public Payment createPayment(
             PaymentRequestDTO request,
@@ -158,5 +164,79 @@ public class PaymentService {
         dto.setRazorpayOrderId(payment.getRazorpayOrderId());
 
         return dto;
+    }
+    public Payment verifyPayment(
+            PaymentVerificationRequestDTO request,
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        Payment payment = paymentRepository
+                .findByRazorpayOrderId(request.getRazorpayOrderId())
+                .orElseThrow(() ->
+                        new PaymentNotFoundException("Payment not found"));
+
+        // Make sure this payment belongs to the logged-in user
+        if (!payment.getOrder().getUser().getId().equals(user.getId())) {
+            throw new PaymentNotFoundException("Payment not found");
+        }
+
+        if (payment.getStatus() != PaymentStatus.PENDING) {
+            throw new PaymentStatusException("Payment cannot be verified");
+        }
+
+        try {
+            JSONObject attributes = new JSONObject();
+
+            attributes.put("razorpay_order_id",
+                    request.getRazorpayOrderId());
+
+            attributes.put("razorpay_payment_id",
+                    request.getRazorpayPaymentId());
+
+            attributes.put("razorpay_signature",
+                    request.getRazorpaySignature());
+
+            boolean valid = Utils.verifyPaymentSignature(
+                    attributes,
+                    razorpayKeySecret
+            );
+            if (!valid) {
+                throw new PaymentStatusException(
+                        "Invalid Razorpay payment signature");
+            }
+
+            payment.setStatus(PaymentStatus.SUCCESS);
+
+            Order order = payment.getOrder();
+            order.setStatus(OrderStatus.PAID);
+            orderRepository.save(order);
+
+            Transaction transaction = new Transaction();
+            transaction.setAmount(payment.getAmount());
+            transaction.setCurrency(payment.getCurrency());
+            transaction.setType(TransactionType.PAYMENT);
+            transaction.setStatus(TransactionStatus.SUCCESS);
+            transaction.setUser(user);
+            transaction.setPayment(payment);
+            transaction.setCreatedAt(LocalDateTime.now());
+            transaction.setTransactionReference(
+                    UUID.randomUUID().toString()
+            );
+            transaction.setDescription(
+                    "Payment for order " + order.getOrderReference()
+            );
+
+            transactionRepository.save(transaction);
+
+            return paymentRepository.save(payment);
+
+        } catch (PaymentStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new PaymentStatusException(
+                    "Payment verification failed"
+            );
+        }
     }
 }
