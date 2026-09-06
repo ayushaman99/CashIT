@@ -165,6 +165,7 @@ public class PaymentService {
 
         return dto;
     }
+    @Transactional
     public Payment verifyPayment(
             PaymentVerificationRequestDTO request,
             Authentication authentication) {
