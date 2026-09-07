@@ -45,9 +45,16 @@ public class PaymentService {
 
     public Payment createPayment(
             PaymentRequestDTO request,
-            Authentication authentication) {
+            Authentication authentication,String idempotencyKey) {
 
         User user = (User) authentication.getPrincipal();
+
+        Optional<Idempotency> existingRequest =
+                idempotencyRepository.findByIdempotencyKey(idempotencyKey);
+
+        if (existingRequest.isPresent()) {
+            return existingRequest.get().getPayment();
+        }
 
         Order order = orderRepository
                 .findByIdAndUser(request.getOrderId(), user)
