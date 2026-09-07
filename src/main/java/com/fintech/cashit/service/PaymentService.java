@@ -1,5 +1,6 @@
 package com.fintech.cashit.service;
 import com.fintech.cashit.DTO.PaymentVerificationRequestDTO;
+import com.fintech.cashit.repository.IdempotencyRepository;
 import org.springframework.beans.factory.annotation.Value;
 import com.fintech.cashit.DTO.PaymentRequestDTO;
 import com.fintech.cashit.DTO.PaymentResponseDTO;
@@ -36,6 +37,9 @@ public class PaymentService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private IdempotencyRepository idempotencyRepository;
 
 
 
