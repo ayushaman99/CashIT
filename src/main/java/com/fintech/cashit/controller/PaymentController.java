@@ -19,10 +19,15 @@ public class PaymentController {
     @PostMapping("/payments")
     public PaymentResponseDTO createPayment(
             @RequestBody @Valid PaymentRequestDTO request,
+            @RequestHeader("Idempotency-Key") String idempotencyKey,
             Authentication authentication) {
 
         return paymentService.convertToDTO(
-                paymentService.createPayment(request, authentication)
+                paymentService.createPayment(
+                        request,
+                        authentication,
+                        idempotencyKey
+                )
         );
     }
     @PostMapping("/payments/verify")
