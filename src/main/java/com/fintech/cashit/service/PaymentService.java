@@ -113,7 +113,16 @@ public class PaymentService {
             );
         }
 
-        return paymentRepository.save(payment);
+        payment = paymentRepository.save(payment);
+
+        Idempotency idempotency = new Idempotency();
+        idempotency.setIdempotencyKey(idempotencyKey);
+        idempotency.setPayment(payment);
+        idempotency.setCreatedAt(LocalDateTime.now());
+
+        idempotencyRepository.save(idempotency);
+
+        return payment;
 
 
     }
