@@ -39,6 +39,9 @@ public class PaymentService {
     private OrderRepository orderRepository;
 
     @Autowired
+    private FraudCheckService fraudCheckService;
+
+    @Autowired
     private IdempotencyRepository idempotencyRepository;
 
 
@@ -89,6 +92,12 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PENDING);
         payment.setPaymentReference(UUID.randomUUID().toString());
         payment.setCreatedAt(LocalDateTime.now());
+
+        if (fraudCheckService.isFraudulent(payment)) {
+            throw new PaymentStatusException(
+                    "Payment blocked due to fraud detection"
+            );
+        }
 
         try {
             JSONObject razorpayOrderRequest = new JSONObject();

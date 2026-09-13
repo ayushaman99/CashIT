@@ -13,6 +13,9 @@ public class FraudCheckService {
         if (payment.getAmount().compareTo(new BigDecimal("100000")) > 0) {
             return true;
         }
+        if (payment.getAmount().compareTo(new BigDecimal("1")) < 0) {
+            return true;
+        }
 
         return false;
     }
