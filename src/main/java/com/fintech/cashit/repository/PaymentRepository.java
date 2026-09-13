@@ -7,6 +7,7 @@ import com.fintech.cashit.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +16,8 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
     List<Payment> findByOrder_User(User user);
     Optional<Payment> findByOrderAndStatus(Order order, PaymentStatus status);
     Optional<Payment> findByRazorpayOrderId(String razorpayOrderId);
+    long countByOrder_UserAndCreatedAtAfter(
+            User user,
+            LocalDateTime time
+    );
 }
