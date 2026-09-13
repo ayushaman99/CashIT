@@ -2,6 +2,7 @@ package com.fintech.cashit.service;
 
 import com.fintech.cashit.entity.Order;
 import com.fintech.cashit.entity.PaymentLink;
+import com.fintech.cashit.entity.User;
 import com.fintech.cashit.repository.OrderRepository;
 import com.fintech.cashit.repository.PaymentLinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class PaymentLinkService {
         var user = authentication.getPrincipal();
 
         Order order = orderRepository
-                .findById(orderId)
+                .findByIdAndUser(orderId, (User) user)
                 .orElseThrow(() ->
                         new RuntimeException("Order not found"));
 
