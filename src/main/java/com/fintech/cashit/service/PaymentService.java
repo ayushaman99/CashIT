@@ -197,7 +197,7 @@ public class PaymentService {
                 .orElseThrow(() ->
                         new PaymentNotFoundException("Payment not found"));
 
-        // Make sure this payment belongs to the logged-in user
+
         if (!payment.getOrder().getUser().getId().equals(user.getId())) {
             throw new PaymentNotFoundException("Payment not found");
         }
