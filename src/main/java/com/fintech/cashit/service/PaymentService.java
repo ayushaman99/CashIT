@@ -34,7 +34,8 @@ public class PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
-
+    @Autowired
+    private AuditLogService auditLogService;
     @Autowired
     private OrderRepository orderRepository;
 
@@ -123,6 +124,13 @@ public class PaymentService {
         }
 
         payment = paymentRepository.save(payment);
+
+        auditLogService.log(
+                user,
+                "PAYMENT_CREATED",
+                "Payment created for order " +
+                        order.getOrderReference()
+        );
 
         Idempotency idempotency = new Idempotency();
         idempotency.setIdempotencyKey(idempotencyKey);
@@ -258,6 +266,13 @@ public class PaymentService {
             );
 
             transactionRepository.save(transaction);
+
+            auditLogService.log(
+                    user,
+                    "PAYMENT_VERIFIED",
+                    "Razorpay payment verified for order " +
+                            order.getOrderReference()
+            );
 
             return paymentRepository.save(payment);
 
