@@ -25,44 +25,30 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
-
     @Mock
     private Authentication authentication;
-
     @InjectMocks
     private OrderService orderService;
-
     private User user;
 
     @BeforeEach
     void setUp() {
-        user = new User();
-
+        user=new User();
         when(authentication.getPrincipal())
                 .thenReturn(user);
     }
 
     @Test
     void shouldCreateOrder() {
-
         OrderRequestDTO request = new OrderRequestDTO();
-
         request.setAmount(new BigDecimal("500"));
         request.setCurrency("INR");
         request.setDescription("Test order");
-
         Order savedOrder = new Order();
+        when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
 
-        when(orderRepository.save(any(Order.class)))
-                .thenReturn(savedOrder);
-
-        Order result = orderService.createOrder(
-                request,
-                authentication
-        );
-
+        Order result = orderService.createOrder(request, authentication);
         assertNotNull(result);
-
         verify(orderRepository).save(any(Order.class));
     }
 
