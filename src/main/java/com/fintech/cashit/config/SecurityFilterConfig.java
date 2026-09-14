@@ -35,6 +35,14 @@ public class SecurityFilterConfig {
                                 "/findallusers"
                         ).hasRole("ADMIN")
                         .anyRequest().authenticated()
+
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/actuator/health",
+                                "/actuator/info"
+                        ).permitAll()
                 );
 
         return http.build();
