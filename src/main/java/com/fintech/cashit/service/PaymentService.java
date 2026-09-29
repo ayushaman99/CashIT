@@ -27,7 +27,7 @@ import java.util.UUID;
 public class PaymentService {
     @Autowired
     private RazorpayClient razorpayClient;
-    @Value("${RAZORPAY_KEY_SECRET}")
+    @Value("${razorpay.key.secret}")
     private String razorpayKeySecret;
     @Autowired
     private TransactionRepository transactionRepository;

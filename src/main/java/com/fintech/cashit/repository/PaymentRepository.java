@@ -16,8 +16,5 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
     List<Payment> findByOrder_User(User user);
     Optional<Payment> findByOrderAndStatus(Order order, PaymentStatus status);
     Optional<Payment> findByRazorpayOrderId(String razorpayOrderId);
-    long countByOrder_UserAndCreatedAtAfter(
-            User user,
-            LocalDateTime time
-    );
+    long countByOrder_UserAndCreatedAtAfter(User user, LocalDateTime time);
 }

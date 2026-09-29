@@ -7,13 +7,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/payment-links")
+@RequestMapping("/payment-links")   //flipkart.in/payment-links
 public class PaymentLinkController {
 
     @Autowired
     private PaymentLinkService paymentLinkService;
 
-    @PostMapping("/{orderId}")
+    @PostMapping("/{orderId}")  //flipkart.in/payment-links/12
     public PaymentLink createPaymentLink(
             @PathVariable Long orderId,
             Authentication authentication) {

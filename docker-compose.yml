@@ -10,7 +10,11 @@ services:
       - "55432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  redis:
+    image: redis:7
+    container_name: cashit-redis
+    ports:
+      - "6379:6379"
   cashit-app:
     build: .
     container_name: cashit-app
@@ -24,6 +28,8 @@ services:
       SPRING_FLYWAY_ENABLED: "true"
 
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_dummy}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-dummy_secret}
     depends_on:
       - postgres
 

@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/orders")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/CreateOrders")
+    @PostMapping("/create")
     public OrderResponseDTO createOrder(
             @RequestBody @Valid OrderRequestDTO request,
             Authentication authentication) {
@@ -26,7 +27,7 @@ public class OrderController {
         );
     }
 
-    @GetMapping("/orders")
+    @GetMapping
     public List<OrderResponseDTO> getUserOrders(
             Authentication authentication) {
 
@@ -36,7 +37,7 @@ public class OrderController {
                 .toList();
     }
 
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     public OrderResponseDTO getOrderById(
             @PathVariable Long id,
             Authentication authentication) {

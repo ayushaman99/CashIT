@@ -26,23 +26,22 @@ public class SecurityFilterConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                HttpMethod.POST,
-                                "/login",
-                                "/users"
-                        ).permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/findallusers"
-                        ).hasRole("ADMIN")
-                        .anyRequest().authenticated()
-
-                        .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/actuator/health",
                                 "/actuator/info"
                         ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/users/login",
+                                "/users/create"
+                        ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/users/findallusers"
+                        ).hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 );
 
         return http.build();
