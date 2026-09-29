@@ -33,6 +33,18 @@ public class RedisIdempotencyService {
                 .set(key, paymentId.toString(), Duration.ofHours(24));
     }
 
+    public boolean markProcessing(String idempotencyKey) {
+
+        String key = "idempotency:" + idempotencyKey;
+
+        return redisTemplate.opsForValue()
+                .setIfAbsent(
+                        key,
+                        "PROCESSING",
+                        Duration.ofMinutes(10)
+                );
+    }
+
     public Long getPaymentId(String idempotencyKey) {
 
         String key = "idempotency:" + idempotencyKey;

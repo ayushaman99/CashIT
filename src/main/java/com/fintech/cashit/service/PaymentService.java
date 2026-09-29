@@ -33,6 +33,9 @@ public class PaymentService {
     private TransactionRepository transactionRepository;
 
     @Autowired
+    private RedisIdempotencyService redisIdempotencyService;
+
+    @Autowired
     private PaymentRepository paymentRepository;
     @Autowired
     private AuditLogService auditLogService;
@@ -52,6 +55,17 @@ public class PaymentService {
             Authentication authentication,String idempotencyKey) {
 
         User user = (User) authentication.getPrincipal();
+
+        Long cachedPaymentId =
+                redisIdempotencyService.getPaymentId(idempotencyKey);
+
+        if (cachedPaymentId != null) {
+
+            return paymentRepository
+                    .findByIdAndOrder_User(cachedPaymentId, user)
+                    .orElseThrow(() ->
+                            new PaymentNotFoundException("Payment not found"));
+        }
 
         Optional<Idempotency> existingRequest =
                 idempotencyRepository.findByIdempotencyKey(idempotencyKey);
@@ -139,6 +153,10 @@ public class PaymentService {
 
         idempotencyRepository.save(idempotency);
 
+
+        redisIdempotencyService.savePaymentId(
+                idempotencyKey,
+                payment.getId());
         return payment;
 
 
